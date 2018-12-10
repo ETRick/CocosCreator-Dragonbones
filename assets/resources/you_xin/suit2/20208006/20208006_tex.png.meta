@@ -1,9 +1,11 @@
 {
-  "ver": "1.0.0",
+  "ver": "2.3.0",
   "uuid": "8dbc4fa3-ca0d-4c8b-96a7-286564674b1c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "20208006_tex": {
       "ver": "1.0.3",
