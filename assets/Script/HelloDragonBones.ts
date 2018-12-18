@@ -1,5 +1,6 @@
 import LoaderManager from "./common/LoaderManager";
 import AvatarNode from "./common/AvatarNode";
+import CommonUtils from "./common/CommonUtils";
 
 /**
  * 掩饰如何动态加载dragonbones armature进场景（cocos creator 2.0）
@@ -10,12 +11,7 @@ import AvatarNode from "./common/AvatarNode";
 @cc._decorator.ccclass
 export default class HelloDragonBones extends cc.Component {
     async start() {
-        let dbNode = new cc.Node();
-        dbNode.setParent(cc.director.getScene());
-        dbNode.x = cc.view.getVisibleSize().width / 2;
-        dbNode.y = 0;
-        dbNode.addComponent(dragonBones.ArmatureDisplay);
-        let avatarNode = dbNode.addComponent(AvatarNode);
+        let avatarNode = CommonUtils.GenerateDBNode("mecha_1002_101d", cc.view.getVisibleSize().width / 2, 0);
         avatarNode.initArmature("mecha_1002_101d_show/mecha_1002_101d_show", "mecha_1002_101d");
         await avatarNode.waitLoadComplete();
         avatarNode.play("idle");

@@ -18,6 +18,7 @@ export default class AvatarNode extends cc.Component {
     onLoad() {
         // 只有添加到场景上才会调用到onLoad和start,而且是添加到场景上后马上就会执行
         this.armatureDisplay = this.getComponent<dragonBones.ArmatureDisplay>(dragonBones.ArmatureDisplay);
+        this.armatureDisplay.addEventListener
         if (!this.armatureDisplay) {
             console.error(this._logTag + "can not find component for dragonBones.ArmatureDisplay.");
         }
@@ -66,6 +67,14 @@ export default class AvatarNode extends cc.Component {
      */
     public play(animName: string, playTimes: number = -1): dragonBones.AnimationState {
         return this.armature.animation.play(animName, playTimes);
+    }
+
+    public getArmature(): dragonBones.Armature{
+        return this.armature;
+    }
+
+    public getArmatureDisplay(): dragonBones.ArmatureDisplay{
+        return this.armatureDisplay;
     }
 
     /**
