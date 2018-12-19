@@ -9,13 +9,16 @@ export default class DragonBonesEvent extends cc.Component {
 
     async start() {
 
-        this.avatarNode = CommonUtils.GenerateDBNode("mecha_1004d", cc.view.getVisibleSize().width / 2, cc.view.getVisibleSize().height / 2);
+        this.avatarNode = CommonUtils.GenerateDBNode("mecha_1004d", cc.view.getVisibleSize().width / 2, 0);
         this.avatarNode.initArmature("mecha_1004d/mecha_1004d", "mecha_1004d");
         await this.avatarNode.waitLoadComplete();
         this.avatarNode.play("idle");
         this.armature = this.avatarNode.getArmature();
         this.armatureDisplayComp = this.avatarNode.getArmatureDisplay();
 
+        // dragonBones.CCFactory.getInstance().
+
+        this.armatureDisplayComp.addEventListener(dragonBones.EventObject.COMPLETE, this._animationEventHandler, this);
         this.node.on(cc.Node.EventType.TOUCH_START, () => {
             this.armature.animation.fadeIn("skill_03", 0.2);
         }, this);
@@ -26,6 +29,7 @@ export default class DragonBonesEvent extends cc.Component {
     }
 
     private _animationEventHandler(eventObject: dragonBones.EventObject): void {
+        console.log(eventObject.animationState.name);
         if (eventObject.animationState.name === "skill_03") {
             this.armature.animation.fadeIn("walk", 0.2);
         }
