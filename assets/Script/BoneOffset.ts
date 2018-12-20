@@ -1,35 +1,30 @@
+import LoaderManager from "./common/LoaderManager";
+import AvatarNode from "./common/AvatarNode";
+import CommonUtils from "./common/CommonUtils";
+
 @cc._decorator.ccclass
 export default class BoneOffset extends cc.Component {
-    start() {
-        const resources = [
-            cc.url.raw("resources/bullet_01/bullet_01_ske.json"),
-            cc.url.raw("resources/bullet_01/bullet_01_tex.json"),
-            cc.url.raw("resources/bullet_01/bullet_01_tex.png"),
-        ];
-        cc.loader.load(resources, (err, assets) => {
-            const factory = dragonBones.CocosFactory.factory;
-            factory.parseDragonBonesData(cc.loader.getRes(resources[0]));
-            factory.parseTextureAtlasData(cc.loader.getRes(resources[1]), cc.loader.getRes(resources[2]));
+    async start() {
+        
+        // avatarNode.play("idle");
 
-            for (let i = 0; i < 100; ++i) {
-                //
-                const armatureComponent = factory.buildArmatureComponent("bullet_01");
-                armatureComponent.addDBEventListener(dragonBones.EventObject.COMPLETE, this._animationEventHandler, this);
-                armatureComponent.node.x = 0.0;
-                armatureComponent.node.y = 0.0;
-                this.node.addChild(armatureComponent.node);
-                //
-                this._moveTo(armatureComponent);
-            }
-        });
+        for (let i = 0; i < 100; ++i) {
+            let avatarNode = CommonUtils.GenerateDBNode("bullet_01/bullet_01", cc.view.getVisibleSize().width / 2, cc.view.getVisibleSize().height / 2);
+            avatarNode.initArmature("bullet_01/bullet_01", "bullet_01");
+            await avatarNode.waitLoadComplete();
+            let armatureDisplayComp = avatarNode.getArmatureDisplay();
+            // 因为在_animationEventHandler 里面拿不到dragonbones.ArmatureDisplay, 临时这么加了一下
+            armatureDisplayComp.armature().proxy["_comp"] = armatureDisplayComp;
+            armatureDisplayComp.addEventListener(dragonBones.EventObject.COMPLETE, this._animationEventHandler, this);
+            this._moveTo(armatureDisplayComp);
+        }
     }
 
-    private _animationEventHandler(event: cc.Event.EventCustom): void {
-        const eventObject = event.getUserData() as dragonBones.EventObject;
-        this._moveTo(eventObject.armature.proxy as dragonBones.CocosArmatureComponent);
+    private _animationEventHandler(eventObject: dragonBones.EventObject): void {
+        this._moveTo(eventObject.armature.proxy["_comp"] as dragonBones.ArmatureDisplay);
     }
 
-    private _moveTo(armatureComponent: dragonBones.CocosArmatureComponent): void {
+    private _moveTo(armatureComponent: dragonBones.ArmatureDisplay): void {
         const fromX = armatureComponent.node.x;
         const fromY = armatureComponent.node.y;
 
@@ -40,8 +35,8 @@ export default class BoneOffset extends cc.Component {
         const toY = Math.random() * size.height - size.height * 0.5;
         const dX = toX - fromX;
         const dY = toY - fromY;
-        const rootSlot = armatureComponent.armature.getBone("root");
-        const bulletSlot = armatureComponent.armature.getBone("bullet");
+        const rootSlot = armatureComponent.armature().getBone("root");
+        const bulletSlot = armatureComponent.armature().getBone("bullet");
         // Modify root and bullet bone offset.
         rootSlot.offset.scaleX = Math.sqrt(dX * dX + dY * dY) / 100.0; // Bullet translate distance is 100 px.
         rootSlot.offset.rotation = Math.atan2(dY, dX);
@@ -52,7 +47,7 @@ export default class BoneOffset extends cc.Component {
         rootSlot.invalidUpdate();
         bulletSlot.invalidUpdate();
         //
-        armatureComponent.animation.timeScale = 0.5 + Math.random() * 1.0; // Random animation speed.
-        armatureComponent.animation.play("idle", 1);
+        armatureComponent.armature().animation.timeScale = 0.5 + Math.random() * 1.0; // Random animation speed.
+        armatureComponent.armature().animation.play("idle", 1);
     }
 }

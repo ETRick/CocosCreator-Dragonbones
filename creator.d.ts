@@ -16464,7 +16464,7 @@ declare module dragonBones {
 		!#zh
 		获取 ArmatureDisplay 当前使用的 Armature 对象 
 		*/
-		armature(): any;	
+		armature(): dragonBones.Armature;	
 	}	
 	/** undefined */
 	export class CCFactory extends BaseFactory {		
