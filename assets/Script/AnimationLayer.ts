@@ -1,32 +1,26 @@
+import CommonUtils from "./common/CommonUtils";
+import AvatarNode from "./common/AvatarNode";
+
 @cc._decorator.ccclass
 export default class AnimationLayer extends cc.Component {
-    private _armatureComponent: dragonBones.CocosArmatureComponent;
+    private armature: dragonBones.Armature;
+    private armatureDisplayComp: dragonBones.ArmatureDisplay;
+    private avatarNode: AvatarNode;
 
-    start() {
-        const resources = [
-            cc.url.raw("resources/mecha_1004d/mecha_1004d_ske.json"),
-            cc.url.raw("resources/mecha_1004d/mecha_1004d_tex.json"),
-            cc.url.raw("resources/mecha_1004d/mecha_1004d_tex.png"),
-        ];
-        cc.loader.load(resources, (err, assets) => {
-            const factory = dragonBones.CocosFactory.factory;
-            factory.parseDragonBonesData(cc.loader.getRes(resources[0]));
-            factory.parseTextureAtlasData(cc.loader.getRes(resources[1]), cc.loader.getRes(resources[2]));
-            //
-            this._armatureComponent = factory.buildArmatureComponent("mecha_1004d");
-            this._armatureComponent.addDBEventListener(dragonBones.EventObject.LOOP_COMPLETE, this._animationEventHandler, this);
-            this._armatureComponent.animation.play("walk");
-
-            this._armatureComponent.node.x = 0.0;
-            this._armatureComponent.node.y = -100.0;
-            this.node.addChild(this._armatureComponent.node);
-        });
+    async start() {
+        this.avatarNode = CommonUtils.GenerateDBNode("mecha_1004d/mecha_1004d", cc.view.getVisibleSize().width / 2, cc.view.getVisibleSize().height / 2);
+        this.avatarNode.initArmature("mecha_1004d/mecha_1004d", "mecha_1004d");
+        await this.avatarNode.waitLoadComplete();
+        this.armature = this.avatarNode.getArmature();
+        this.armatureDisplayComp = this.avatarNode.getArmatureDisplay();
+        this.avatarNode.play("walk");
+        this.armatureDisplayComp.addEventListener(dragonBones.EventObject.LOOP_COMPLETE, this._animationEventHandler, this);
     }
 
-    private _animationEventHandler(event: cc.Event.EventCustom): void {
-        let attackState = this._armatureComponent.animation.getState("attack_01");
+    private _animationEventHandler(eventObject: dragonBones.EventObject): void {
+        let attackState = this.armature.animation.getState("attack_01");
         if (!attackState) {
-            attackState = this._armatureComponent.animation.fadeIn("attack_01", 0.1, 1, 1);
+            attackState = this.armature.animation.fadeIn("attack_01", 0.1, 1, 1);
             attackState.resetToPose = false;
             attackState.autoFadeOutTime = 0.1;
             attackState.addBoneMask("chest");

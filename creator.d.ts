@@ -16438,7 +16438,7 @@ declare module dragonBones {
 		@param listener The callback that will be invoked when the event is dispatched.
 		@param target The target (this object) to invoke the callback, can be null 
 		*/
-		addEventListener(type: string, listener: (event: cc.Event) => void, target?: any): void;		
+		addEventListener(type: string, listener: (eventObject: dragonBones.EventObject) => void, target?: any): void;		
 		/**
 		!#en
 		Remove the event listener for the DragonBones Event.

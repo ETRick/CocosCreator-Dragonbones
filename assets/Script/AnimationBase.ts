@@ -15,6 +15,7 @@ export default class AnimationBase extends cc.Component {
         this.armatureDisplayComp = this.avatarNode.getArmatureDisplay();
        
         // Add animation event listener.
+        // 这里的addEventListener API设计有问题，传递的listener声明不对，我自己改了creator.d.ts
         this.armatureDisplayComp.addEventListener(dragonBones.EventObject.START, this._animationEventHandler, this);
         this.armatureDisplayComp.addEventListener(dragonBones.EventObject.LOOP_COMPLETE, this._animationEventHandler, this);
         this.armatureDisplayComp.addEventListener(dragonBones.EventObject.COMPLETE, this._animationEventHandler, this);
@@ -51,6 +52,10 @@ export default class AnimationBase extends cc.Component {
         }
     }
 
+    /**
+     * 这里不用cc.Event
+     * @param eventObject  
+     */
     private _animationEventHandler(eventObject: dragonBones.EventObject): void {
         console.log(eventObject.animationState.name, eventObject.type, eventObject.name);
     }

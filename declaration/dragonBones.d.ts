@@ -1,5 +1,5 @@
 declare namespace dragonBones {
-    class CCFactory extends BaseFactory {
+    interface CCFactory {
         static readonly getInstance(): CCFactory;
 
         buildArmatureDisplay(armatureName, dragonBonesName, comp) : dragonBones.Armature;
